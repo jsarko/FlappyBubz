@@ -32,19 +32,19 @@ class Player(Object):
     def jump(self):
         self.velocity.y = -7
 
-    def update(self):
-        self.velocity.y += 0.3
+    def update(self, dt):
+        self.velocity.y += 3 * dt
         self.rect.move_ip(self.velocity)
         
 
 class Obstacle(Object):
     def __init__(self, x, y):
-        super().__init__(x, y, 75, 150)
+        super().__init__(x, y, 75, 125)
         self.velocity = pygame.Vector2(0,0)
         self.rect.y = self.rect.y - self.rect.height
 
-    def update(self):
-        self.velocity.x = -5
+    def update(self, dt):
+        self.velocity.x = -50 * dt
         self.rect.move_ip(self.velocity)
 
     def draw(self, screen):

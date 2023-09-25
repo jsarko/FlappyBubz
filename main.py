@@ -17,7 +17,7 @@ class App:
  
     def on_init(self):
         pygame.init()
-        self.screen = pygame.display.set_mode(self.size)
+        self.screen = pygame.display.set_mode(self.size, vsync=1)
         self._running = True
         self.clock = pygame.time.Clock()
         self.player = Player(self.width / 2 - 200, self.height / 2)
@@ -41,11 +41,11 @@ class App:
 
 
     def on_loop(self):
-        self.player.update()
+        self.player.update(self.dt)
 
         # Update obstacles
         for obstacle in self.obstacles:
-            obstacle.update()
+            obstacle.update(self.dt)
 
         # Check if obstacle is offscreen
         if len(self.obstacles) > 0:
@@ -79,7 +79,7 @@ class App:
             if not self.pregame:
                 self.on_loop()
             self.on_render()
-            self.dt = self.clock.tick(60) / 1000
+            self.dt = 1 / self.clock.tick(120)
 
         self.on_cleanup()
  
