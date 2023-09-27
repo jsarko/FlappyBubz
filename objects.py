@@ -1,9 +1,11 @@
 import pygame
+from random import randrange
+from consts import OBSTACLE_GAP, OBSTACLE_MINIMUM_HEIGHT
 
 class Object:
     def __init__(self, x, y, height, width):
         self.color = (255, 101, 101)
-        self.rect = pygame.Rect(x, y, height, width)
+        self.rect = pygame.Rect(x, y, width, height)
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
@@ -30,7 +32,7 @@ class Player(Object):
         self.velocity = pygame.Vector2(0,0)
 
     def jump(self):
-        self.velocity.y = -7
+        self.velocity.y = -5
 
     def update(self, dt):
         self.velocity.y += 3 * dt
@@ -38,10 +40,12 @@ class Player(Object):
         
 
 class Obstacle(Object):
-    def __init__(self, x, y):
-        super().__init__(x, y, 75, 125)
+    def __init__(self, x, y, screen_height=None):
+        h1, self.h2 = self.getRandomObstacleHeight(screen_height)
+        super().__init__(x, y, height=h1, width=75)
         self.velocity = pygame.Vector2(0,0)
         self.rect.y = self.rect.y - self.rect.height
+        self.obstacle2_height = 2
 
     def update(self, dt):
         self.velocity.x = -50 * dt
@@ -50,5 +54,22 @@ class Obstacle(Object):
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
         pygame.draw.rect(screen, self.color, 
-                         (self.rect.x, 0, self.rect.width, self.rect.height)
+                         (self.rect.x, 0, self.rect.width, self.h2)
                          )
+    def get_obstacle2_height(self, screen_height):
+        # Calculates the height for the second generated obstacle
+        max_combined_height = screen_height - OBSTACLE_GAP
+        height = max_combined_height - self.height
+        return height
+    
+    @staticmethod
+    def getRandomObstacleHeight(screen_height):
+        # The maximum combined height for the obstacles is found by subtracting
+        # our screen height minus our gap size.
+        max_combined_height = screen_height - OBSTACLE_GAP
+        # The first height is a random number between our minimum height and maximum height,
+        # defined as max_combined_height - minimum_height
+        h1 = randrange(OBSTACLE_MINIMUM_HEIGHT, max_combined_height - OBSTACLE_MINIMUM_HEIGHT)
+        # Our second height is the difference between our first height and our max combined height
+        h2 = max_combined_height - h1
+        return [h1, h2]
